@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Анализ личности по профилю X (Twitter)</title>
+    <style>
+        /* Глобальные стили и переменные */
+        :root {
+            --primary-color: #1DA1F2; /* Цвет в стиле Twitter Blue */
+            --background-color: #15202B; /* Темный фон */
+            --card-color: #192734; /* Цвет карточек */
+            --text-color: #F5F8FA; /* Основной текст */
+            --text-secondary-color: #8899A6; /* Второстепенный текст */
+            --border-radius: 12px;
+            --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Сброс стилей и базовые настройки */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Шапка */
+        header {
+            margin-bottom: 40px;
+            padding: 20px;
+        }
+
+        header h1 {
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            color: var(--text-color);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        header p {
+            font-size: 1.2em;
+            color: var(--text-secondary-color);
+        }
+
+        /* Главная секция с формой */
+        .analyzer-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 60px;
+        }
+        
+        @media (min-width: 600px) {
+            .analyzer-form {
+                flex-direction: row;
+            }
+        }
+
+        .analyzer-form input {
+            flex-grow: 1;
+            padding: 15px 20px;
+            font-size: 1em;
+            border: 1px solid var(--card-color);
+            border-radius: var(--border-radius);
+            background-color: var(--card-color);
+            color: var(--text-color);
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .analyzer-form input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(29, 161, 242, 0.3);
+        }
+
+        .analyzer-form button {
+            padding: 15px 30px;
+            font-size: 1em;
+            font-weight: bold;
+            color: #fff;
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: var(--box-shadow);
+        }
+
+        .analyzer-form button:hover {
+            background-color: #1a91da;
+            transform: translateY(-2px);
+        }
+
+        /* Секция "Как это работает" */
+        .how-it-works {
+            margin-bottom: 60px;
+        }
+
+        h2 {
+            font-size: 2em;
+            margin-bottom: 30px;
+            color: var(--text-color);
+        }
+
+        .features {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .features {
+                flex-direction: row;
+            }
+        }
+
+        .feature-card {
+            flex: 1;
+            background-color: var(--card-color);
+            padding: 30px 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .feature-card .icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .feature-card h3 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary-color);
+        }
+        
+        /* Секция "Пример анализа" */
+        .example-analysis {
+            background-color: var(--card-color);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            text-align: left;
+            box-shadow: var(--box-shadow);
+            border-left: 5px solid var(--primary-color);
+        }
+        
+        .example-analysis h2 {
+            text-align: center;
+        }
+
+        .example-analysis .profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--text-secondary-color-alpha);
+        }
+        
+        .example-analysis .profile-link {
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .example-analysis .profile-link:hover {
+            text-decoration: underline;
+        }
+
+        .analysis-points ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .analysis-points li {
+            margin-bottom: 15px;
+            padding-left: 25px;
+            position: relative;
+        }
+        
+        .analysis-points li::before {
+            content: '✓'; /* Галочка */
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        /* Футер */
+        footer {
+            margin-top: 60px;
+            padding: 20px;
+            color: var(--text-secondary-color);
+            font-size: 0.9em;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <header>
+            <h1>Психологический портрет по вашему X (Twitter)</h1>
+            <p>Узнайте, что ваши твиты, лайки и подписки говорят о вас. Наш ИИ проанализирует ваш профиль и создаст детальный отчет.</p>
+        </header>
+
+        <main>
+            <section id="analyzer" class="analyzer-form">
+                <input type="text" placeholder="Вставьте ссылку на профиль, например, https://x.com/username">
+                <button onclick="alert('Функция анализа в разработке! Но вы можете посмотреть пример ниже.')">Анализировать</button>
+            </section>
+
+            <section id="how-it-works" class="how-it-works">
+                <h2>Как это работает?</h2>
+                <div class="features">
+                    <div class="feature-card">
+                        <div class="icon">🔗</div>
+                        <h3>1. Вставьте ссылку</h3>
+                        <p>Скопируйте и вставьте ссылку на любой открытый профиль в X (Twitter).</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">🧠</div>
+                        <h3>2. ИИ-Анализ</h3>
+                        <p>Наша нейросеть обработает твиты, реплаи и стиль общения для составления портрета.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">📊</div>
+                        <h3>3. Получите отчет</h3>
+                        <p>Вы получите понятный и подробный отчет о чертах личности, интересах и стиле коммуникации.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="example" class="example-analysis">
+                <h2>Пример анализа</h2>
+                <div class="profile">
+                    Анализ профиля: <a href="https://x.com/Web3Duke1" target="_blank" class="profile-link">@Web3Duke1</a>
+                </div>
+                <div class="analysis-points">
+                    <ul>
+                        <li><strong>Ключевые черты:</strong> Новатор, стратегический мыслитель. Человек сфокусирован на будущем и новых технологиях. Вероятно, обладает лидерскими качествами ("Duke") и амбициями.</li>
+                        <li><strong>Стиль общения:</strong> Прямой и уверенный. Использует техническую лексику, связанную с Web3, что указывает на глубокую погруженность в тему. Общение нацелено на обмен информацией и идеями.</li>
+                        <li><strong>Основные интересы:</strong> Технологии Web3, блокчейн, децентрализованные финансы (DeFi), NFT и будущее интернета. Следит за трендами в крипто-индустрии.</li>
+                        <li><strong>Психотип (предположительно):</strong> "Архитектор" (INTJ) или "Командир" (ENTJ). Аналитический склад ума, нацеленность на результат и построение сложных систем.</li>
+                    </ul>
+                </div>
+            </section>
+
+        </main>
+
+        <footer>
+            <p>© 2024 Twitter Personality Analyzer. Создано для демонстрационных целей.</p>
+        </footer>
+
+    </div>
+
+</body>
+</html>
